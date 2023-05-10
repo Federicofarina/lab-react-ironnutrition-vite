@@ -1,34 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import React, { useState } from 'react'
 import './App.css'
+import { Card, Col, Button, Row, Divider, Input } from "antd"
+import foods from "./foods.json"
+import FoodBox from './components/FoodBox'
+import AddFoodForm from './components/AddFoodForm'
+import Search from './components/Search'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [foodState, setFoodState] = useState(foods);
+
+  function searchFood(search) {
+    console.log(search)
+    const searchResults = foodState.filter(food => {
+      return food.name.toLowerCase().includes(search.toLowerCase())
+    })
+    setFoodState(searchResults)
+  }
+  function deleteFood(index) {
+  const updatedFood = [... foodState]
+  updatedFood.splice(index, 1)
+  setFoodState(updatedFood) 
+  }
 
   return (
     <div className="App">
+      <h1>Food List</h1>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Search searchFood = {searchFood}/>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div className='Addform'>
+        <AddFoodForm setFoodState = {setFoodState} foodState = {foodState}/>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {foodState.map ((food, i) => (
+        <div key={i} className='FoodBox'>
+        <FoodBox food={food} index={i} deleteFood={deleteFood} />
+        </div>
+        ))}
     </div>
-  )
+  );
 }
 
 export default App
